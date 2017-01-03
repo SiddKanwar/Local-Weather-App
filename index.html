@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <title>QGen</title>
+
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            text-align: center;
+        }
+        
+        .contentContainer {
+            background-image: url(background.jpg);
+            background-size: cover;
+            width: 100%;
+        }
+        
+        .bold {
+            font-weight: bold;
+        }
+        
+        .center {
+            text-align: center;
+        }
+        
+        .title {
+            text-shadow: 0 0 0.3em #67d054;
+            width: 40%;
+            background-color: lightgray;
+            border-radius: 20px;
+            padding-top: 0px;
+            margin-top: 10px;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 60px;
+            color: black;
+            opacity: .8;
+        }
+        
+        #location {
+            background-color: white;
+            margin-right: 10px;
+            border-radius: 5px;
+        }
+        
+        #description {
+            background-color: white;
+            margin-right: 10px;
+            border-radius: 5px;
+        }
+        
+        #wind {
+            background-color: white;
+            margin-left: 0px;
+            border-radius: 5px;
+        }
+        
+        .details {
+            border: 2px solid #ffffff;
+            color: #7F3320;
+            padding: 30px 30px 30px 30px;
+            background-color: #ffffff;
+            border-radius: 0.3em;
+            box-shadow: .2em .2em .2em #444;
+            opacity: 0.7;
+            margin-top: 20px;
+            font-size: 30px;
+        }
+        
+        #location,
+        #description,
+        #wind {
+            display: inline-block;
+        }
+        
+        #temperature {
+            background-color: azure;
+            width: auto;
+            margin-top: 200px;
+            font-size: 40px;
+            display: inline-block;
+            padding: 40px 40px 40px 40px;
+        }
+        
+        .icon {}
+    </style>
+</head>
+
+<body>
+
+    <div class="container-fluid contentContainer  ">
+        <div class="title bold  ">
+            <center>Local Weather App</center>
+        </div>
+        <center id="temperature" class="details bold"></center>
+        <center id="temperature" class="details icon"></center>
+        <div>
+
+        </div>
+        <div id="location" class="details">
+            loc
+        </div>
+        <div id="description" class=" details">
+            temp
+        </div>
+        <div id="wind" class=" details">
+            wind
+        </div>
+
+
+
+    </div>
+
+
+
+
+
+
+    <script>
+        $(document).ready(function () {
+            $(".contentContainer").css("min-height", $(window).height());
+
+            var kelvin;
+            var fahrenheit;
+            var celsius;
+            var long;
+            var lat;
+
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+
+                    var swap = true; // used for the fahrenheit and celsius switch
+
+                    lat = position.coords.latitude;
+                    long = position.coords.longitude;
+                    // $("#location").html("lat: " + lat + "<br> long: " + long);
+
+
+                    var api = 'http://api.openweathermap.org/data/2.5/weather?lat=' + lat + '&lon=' + long + '&appid=b93a4729e5a254627690feb28cc99cea';
+                    //open weather API
+                    $.getJSON(api, function (data) {
+                        var weather = data.weather[0].description;
+                        var windSpeed = data.wind.speed;
+                        var city = data.name;
+                        var iconPic = data.weather[0].icon;
+                        kelvin = (data.main.temp).toFixed(0);
+                        fahrenheit = ((kelvin) * (9 / 5) - (459.67)).toFixed(0);
+                        celsius = (kelvin - 273).toFixed(0);
+
+
+                        $("#location").html(city);
+                        $("#description").html(weather);
+                        $("#wind").html(windSpeed + " Knots");
+                        $("#temperature").html(fahrenheit + " F");
+
+                        $("#temperature").click(function () {
+
+                            if (swap) {
+                                $("#temperature").html(celsius + " C");
+                                swap = false;
+                            } else {
+                                $("#temperature").html(fahrenheit + " F");
+                                swap = true;
+                            }
+
+                        });
+
+                        var iconSrc = "http://openweathermap.org/img/w/" + iconPic + ".png";
+                        $(".icon").prepend('<img src=' + iconSrc + '>').size();
+
+
+
+
+                    });
+                });
+            }
+
+
+        });
+    </script>
+
+</body>
+
+</html>
+
+<body>
